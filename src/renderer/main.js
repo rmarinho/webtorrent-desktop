@@ -59,6 +59,12 @@ function onState (err, _state) {
   if (err) return onError(err)
   state = window.state = _state // Make available for easier debugging
 
+  // set bounds
+  if (!state.saved.bounds) {
+    state.saved.bounds = electron.remote.getCurrentWindow().getBounds()
+  }
+  electron.remote.getCurrentWindow().setBounds(state.saved.bounds)
+
   // Create controllers
   controllers = {
     media: new MediaController(state),
@@ -273,6 +279,7 @@ function setupIpc () {
   ipcRenderer.on('dispatch', (e, ...args) => dispatch(...args))
 
   ipcRenderer.on('fullscreenChanged', onFullscreenChanged)
+  ipcRenderer.on('windowBoundsChanged', onWindowBoundsChanged)
 
   var tc = controllers.torrent
   ipcRenderer.on('wt-infohash', (e, ...args) => tc.torrentInfoHash(...args))
@@ -445,6 +452,11 @@ function onFullscreenChanged (e, isFullScreen) {
   }
 
   update()
+}
+
+function onWindowBoundsChanged (e, newBounds) {
+  state.saved.bounds = newBounds
+  dispatch('saveStateThrottled')
 }
 
 function checkDownloadPath () {

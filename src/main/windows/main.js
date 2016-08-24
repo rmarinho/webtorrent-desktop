@@ -69,6 +69,14 @@ function init () {
     win.setMenuBarVisibility(true)
   })
 
+  win.on('move', function (e) {
+    send('windowBoundsChanged', e.sender.getBounds())
+  })
+
+  win.on('resize', function (e) {
+    send('windowBoundsChanged', e.sender.getBounds())
+  })
+
   win.on('close', function (e) {
     if (process.platform !== 'darwin' && !tray.hasTray()) {
       app.quit()
