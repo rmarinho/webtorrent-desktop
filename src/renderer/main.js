@@ -59,12 +59,6 @@ function onState (err, _state) {
   if (err) return onError(err)
   state = window.state = _state // Make available for easier debugging
 
-  // set bounds
-  if (!state.saved.bounds) {
-    state.saved.bounds = electron.remote.getCurrentWindow().getBounds()
-  }
-  electron.remote.getCurrentWindow().setBounds(state.saved.bounds)
-
   // Create controllers
   controllers = {
     media: new MediaController(state),

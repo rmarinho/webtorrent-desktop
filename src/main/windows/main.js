@@ -26,10 +26,17 @@ var tray = require('../tray')
 var HEADER_HEIGHT = 38
 var TORRENT_HEIGHT = 100
 
-function init () {
+function init (state) {
   if (main.win) {
     return main.win.show()
   }
+
+  var defaultBounds = {
+    width: 500,
+    height: HEADER_HEIGHT + (TORRENT_HEIGHT * 6) // header height + 5 torrents
+  }
+  var initialBounds = Object.assign(defaultBounds, state.saved.bounds)
+
   var win = main.win = new electron.BrowserWindow({
     backgroundColor: '#282828',
     darkTheme: true, // Forces dark theme (GTK+3)
@@ -39,8 +46,10 @@ function init () {
     title: config.APP_WINDOW_TITLE,
     titleBarStyle: 'hidden-inset', // Hide title bar (Mac)
     useContentSize: true, // Specify web page size without OS chrome
-    width: 500,
-    height: HEADER_HEIGHT + (TORRENT_HEIGHT * 6) // header height + 5 torrents
+    width: initialBounds.width,
+    height: initialBounds.height,
+    x: initialBounds.x,
+    y: initialBounds.y
   })
 
   win.loadURL(config.WINDOW_MAIN)

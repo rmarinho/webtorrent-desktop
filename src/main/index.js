@@ -18,6 +18,7 @@ var tray = require('./tray')
 var updater = require('./updater')
 var userTasks = require('./user-tasks')
 var windows = require('./windows')
+var State = require('../renderer/lib/state')
 
 var shouldQuit = false
 var argv = sliceArgv(process.argv)
@@ -68,7 +69,11 @@ function init () {
   app.on('ready', function () {
     isReady = true
 
-    windows.main.init()
+    State.load(function (err, state) {
+      if (err) throw err
+      windows.main.init(state)
+    })
+
     windows.webtorrent.init()
     menu.init()
 
